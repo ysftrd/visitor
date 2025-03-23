@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class UsrAuthConfig(AppConfig):
+class JadwalConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'usr_auth'
+    name = 'jadwal'

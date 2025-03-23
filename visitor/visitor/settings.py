@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rg#h9(edt%e41$zci*z@f_0)gkdjfqwvivcm3+9zo+yiaf%j#f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,8 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usr_auth',
+    'user_auth',
+    'reservasi',
+    'jadwal',
+    'notifikasi',
+    'log_aktivitas'
 ]
+
+AUTH_USER_MODEL = 'user_auth.Users'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,12 +82,12 @@ WSGI_APPLICATION = 'visitor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myvisitor',  
-        'USER': 'root',          
-        'PASSWORD': '',          
-        'HOST': 'localhost',     
-        'PORT': '3306',          
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'e_visitor',
+        'USER': 'postgres',
+        'PASSWORD': 'Yusuf',
+        'HOST': 'localhost',
+        'PORT': '5432',  
     }
 }
 
@@ -120,8 +126,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [ BASE_DIR / "static" ]
+
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
