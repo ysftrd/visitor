@@ -20,7 +20,6 @@ class GuestVerifications(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='verifications')
     foto_selfie = models.ImageField(upload_to='selfies/', blank=True, null=True)
     foto_ktp = models.ImageField(upload_to='ktp/', blank=True, null=True)
-    tanda_tangan_digital = models.ImageField(upload_to='signatures/', blank=True, null=True)
     tanggal_upload = models.DateTimeField(auto_now_add=True)
     status_verifikasi = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     catatan_admin = models.TextField(blank=True, null=True)

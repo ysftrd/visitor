@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'reservasi',
     'jadwal',
     'notifikasi',
-    'log_aktivitas'
+    'log_aktivitas',
+    'home',
 ]
 
 AUTH_USER_MODEL = 'user_auth.Users'
