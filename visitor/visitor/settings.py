@@ -9,12 +9,25 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables dari file .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Ambil kunci enkripsi dari environment variable
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+
+# Pastikan kunci ada
+if not ENCRYPTION_KEY:
+    raise ValueError("ENCRYPTION_KEY tidak ditemukan di environment variable. Pastikan Anda sudah mengatur kunci di file .env.")
+
+# Konversi kunci ke bytes (Fernet membutuhkan bytes)
+ENCRYPTION_KEY = ENCRYPTION_KEY.encode()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -117,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 
@@ -141,3 +154,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+AUTHENTICATION_BACKENDS = [
+    'user_auth.auth_backend.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
