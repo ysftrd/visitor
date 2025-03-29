@@ -127,12 +127,17 @@ def user_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            logger.debug(f"Mencoba autentikasi untuk email: {email}")
             user = authenticate(request, email=email, password=password)
             if user is not None:
+                logger.debug(f"Autentikasi berhasil untuk email: {email}")
                 login(request, user)
                 return redirect('home')
             else:
+                logger.debug(f"Autentikasi gagal untuk email: {email}")
                 form.add_error(None, "Email atau password salah.")
+        else:
+            logger.debug(f"Form tidak valid: {form.errors}")
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form, 'hide_component': True})

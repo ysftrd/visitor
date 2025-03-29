@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Beri Feedback{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>Beri Feedback untuk Reservasi {{ reservasi.kode_unik }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="feedback" class="form-label">Feedback Anda</label>
+            <textarea id="feedback" name="feedback" class="form-control" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Kirim Feedback</button>
+    </form>
+</div>
+{% endblock %}

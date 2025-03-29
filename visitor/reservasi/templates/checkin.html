@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Check-in Reservasi{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>Check-in Reservasi</h2>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="kode_unik" class="form-label">Kode Reservasi</label>
+            <input type="text" id="kode_unik" name="kode_unik" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Check-in</button>
+    </form>
+</div>
+{% endblock %}

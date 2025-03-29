@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Jadwal{% endblock %}
+
+{% block content %}
+<section class="py-7">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="card card-body blur shadow-blur">
+                    <div class="my-5">
+                        <h2 class="text-center mb-4">Jadwal Karyawan</h2>
+                        {% if user.is_authenticated %}
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                                <label for="karyawanSelect" class="form-label">Pilih Karyawan</label>
+                                <div class="input-group">
+                                    <select id="karyawanSelect" class="form-select karyawan-select">
+                                        <option value="">-- Pilih Karyawan --</option>
+                                        {% for karyawan in karyawans %}
+                                        <option value="{{ karyawan.id }}">{{ karyawan.nama_lengkap }} ({{ karyawan.email }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="input-group-text">
+                                        <i class="material-symbols-rounded">person</i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="datePicker" class="form-label">Pilih Tanggal</label>
+                                <div class="input-group">
+                                    <input type="text" id="datePicker" class="form-control datepicker-input" placeholder="Pilih tanggal...">
+                                    <span class="input-group-text">
+                                        <i class="material-symbols-rounded">calendar_today</i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="calendar"></div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            Anda harus login untuk melihat jadwal. <a href="{% url 'login' %}">Login di sini</a>.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Menyesuaikan tampilan FullCalendar */
+    #calendar {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Gaya untuk date picker dan dropdown karyawan */
+    .datepicker-input, .karyawan-select {
+        border: 2px solid #888b90 !important; /* Border abu-abu gelap */
+        background-color: #f8f9fa !important; /* Background abu-abu muda */
+        transition: all 0.3s ease; /* Efek transisi */
+    }
+
+    .datepicker-input:focus, .karyawan-select:focus {
+        border-color: #71767e !important; /* Border lebih gelap saat fokus */
+        box-shadow: 0 0 8px rgba(52, 71, 103, 0.3) !important; /* Efek bayangan saat fokus */
+        background-color: #ffffff !important; /* Background putih saat fokus */
+    }
+
+    .input-group-text {
+        background-color: #888b90; /* Background abu-abu gelap pada ikon */
+        color: #ffffff; /* Warna ikon putih */
+        border: 2px solid #344767; /* Border sesuai dengan input */
+    }
+
+    /* Menyesuaikan tampilan Flatpickr (kalender pop-up) */
+    .flatpickr-calendar {
+        border: 2px solid #344767 !important; /* Border abu-abu gelap */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; /* Bayangan kalender */
+    }
+
+    .flatpickr-day.selected, .flatpickr-day.selected:hover {
+        background: #28a745 !important; /* Warna hijau untuk tanggal yang dipilih */
+        border-color: #28a745 !important;
+        color: #ffffff !important;
+    }
+
+    .flatpickr-day.today {
+        border-color: #ff6b6b !important; /* Border merah untuk hari ini */
+        background: #ffe3e3 !important; /* Background merah muda untuk hari ini */
+    }
+
+    .flatpickr-day:hover {
+        background: #e9ecef !important; /* Background abu-abu saat hover */
+    }
+
+    /* Responsif untuk perangkat mobile */
+    @media (max-width: 767.98px) {
+        #calendar {
+            min-height: 400px; /* Mengurangi tinggi di mobile */
+        }
+        .fc .fc-toolbar {
+            flex-direction: column; /* Menumpuk tombol toolbar di mobile */
+            gap: 0.5rem;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.2rem; /* Mengurangi ukuran judul */
+        }
+        .fc .fc-button {
+            font-size: 0.9rem; /* Mengurangi ukuran tombol */
+            padding: 0.3rem 0.5rem;
+        }
+        .fc .fc-scroller {
+            -webkit-overflow-scrolling: touch; /* Membuat scroll lebih halus di iOS */
+        }
+        .datepicker-input, .karyawan-select, .input-group-text {
+            font-size: 0.9rem; /* Mengurangi ukuran font di mobile */
+            padding: 0.5rem; /* Mengurangi padding di mobile */
+        }
+        .flatpickr-calendar {
+            width: 100% !important; /* Memastikan kalender mengambil lebar penuh di mobile */
+            max-width: 300px !important; /* Membatasi lebar maksimum */
+            margin: 0 auto !important; /* Memusatkan kalender */
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pastikan pengguna sudah login
+        {% if user.is_authenticated %}
+        // Pastikan FullCalendar tersedia
+        if (typeof FullCalendar === 'undefined') {
+            console.error('FullCalendar tidak tersedia. Pastikan file JS dimuat dengan benar.');
+            return;
+        }
+
+        var calendarEl = document.getElementById('calendar');
+        if (!calendarEl) {
+            console.error("Elemen #calendar tidak ditemukan!");
+            return;
+        }
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek', // Tampilan harian di mobile, mingguan di desktop
+            events: function(fetchInfo, successCallback, failureCallback) {
+                var karyawanId = document.getElementById('karyawanSelect').value;
+                if (!karyawanId) {
+                    successCallback([]);
+                    return;
+                }
+                fetch(`/jadwal/api/?karyawan_id=${karyawanId}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Gagal mengambil data jadwal: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Data jadwal:", data);
+                        successCallback(data);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching events:", error);
+                        failureCallback(error);
+                    });
+            },
+            eventClick: function(info) {
+                var jadwalId = info.event.extendedProps.jadwal_id;
+                window.location.href = `/reservasi/create/${jadwalId}/`;
+            },
+            slotMinTime: '06:00:00', // Mulai dari jam 6 pagi
+            slotMaxTime: '18:00:00', // Sampai jam 6 sore
+            allDaySlot: true, // Menampilkan slot "all-day"
+            height: 'auto', // Tinggi otomatis
+            stickyHeaderDates: true // Header tanggal tetap terlihat saat scroll
+        });
+        calendar.render();
+
+        // Inisialisasi Flatpickr untuk date picker
+        flatpickr("#datePicker", {
+            dateFormat: "Y-m-d", // Format tanggal
+            minDate: "today", // Hanya boleh memilih dari hari ini ke depan
+            onChange: function(selectedDates, dateStr) {
+                if (selectedDates.length > 0) {
+                    calendar.gotoDate(dateStr); // Lompat ke tanggal yang dipilih
+                }
+            }
+        });
+
+        // Refetch events saat karyawan dipilih
+        document.getElementById('karyawanSelect').addEventListener('change', function() {
+            calendar.refetchEvents();
+        });
+
+        // Update tampilan saat ukuran layar berubah
+        window.addEventListener('resize', function() {
+            if (window.innerWidth < 768 && calendar.getOption('initialView') !== 'timeGridDay') {
+                calendar.changeView('timeGridDay');
+            } else if (window.innerWidth >= 768 && calendar.getOption('initialView') !== 'timeGridWeek') {
+                calendar.changeView('timeGridWeek');
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

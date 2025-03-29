@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Buat Reservasi{% endblock %}
+
+{% block content %}
+<section class="py-7">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="card card-body blur shadow-blur">
+<div class="container my-5">
+    <h2>Buat Reservasi</h2>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <!-- reservation_form.html -->
+<form method="post">
+    {% csrf_token %}
+    {% if jadwal %}
+    <input type="hidden" name="jadwal_id" value="{{ jadwal.id }}">
+    <p>Karyawan: {{ jadwal.karyawan.nama_lengkap }}</p>
+    <p>Waktu: {{ jadwal.tanggal }} {{ jadwal.jam_mulai }} - {{ jadwal.jam_selesai }}</p>
+    {% endif %}
+    <div class="mb-3">
+        <label for="tujuan_pertemuan" class="form-label">Tujuan Pertemuan</label>
+        <textarea id="tujuan_pertemuan" name="tujuan_pertemuan" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Ajukan Reservasi</button>
+</form>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

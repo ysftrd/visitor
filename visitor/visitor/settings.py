@@ -161,3 +161,14 @@ AUTHENTICATION_BACKENDS = [
     'user_auth.auth_backend.EmailBackend',
     'django.contrib.auth.backends.ModelBackend', 
 ]
+
+
+
+# email bacnend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'magang730@gmail.com'  
+EMAIL_HOST_PASSWORD = 'uugl qzyx wtha vtyc' 
+DEFAULT_FROM_EMAIL = 'magang730@gmail.com'

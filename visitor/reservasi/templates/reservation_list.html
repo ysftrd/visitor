@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Reservasi{% endblock %}
+
+{% block content %}
+<section class="py-7">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="card card-body blur shadow-blur">
+                    <div class="my-5">
+                        <h2 class="text-center mb-4">Daftar Reservasi Anda</h2>
+                        <div class="table-responsive d-none d-md-block">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Karyawan</th>
+                                        <th>Waktu</th>
+                                        <th>Tujuan</th>
+                                        <th>Status</th>
+                                        <th>Feedback</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in reservations %}
+                                    <tr>
+                                        <td>{{ reservation.kode_unik }}</td>
+                                        <td>{{ reservation.karyawan.nama_lengkap }} ({{ reservation.karyawan.email }})</td>
+                                        <td>{{ reservation.jadwal.tanggal }} {{ reservation.jam_mulai }}</td>
+                                        <td>{{ reservation.tujuan_pertemuan }}</td>
+                                        <td>
+                                            {% if reservation.status == 'completed' or reservation.status == 'approved' %}
+                                            <span class="badge bg-success">{{ reservation.status }}</span>
+                                            {% elif reservation.status == 'pending' %}
+                                            <span class="badge bg-warning">{{ reservation.status }}</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">{{ reservation.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if reservation.feedback %}
+                                            {{ reservation.feedback }}
+                                            {% elif reservation.status == 'completed' %}
+                                            <a href="{% url 'reservasi:feedback_form' reservation.id %}" class="btn btn-sm btn-primary">Beri Feedback</a>
+                                            {% else %}
+                                            Belum selesai
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-block d-md-none">
+                            {% for reservation in reservations %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <p><strong>Kode:</strong> {{ reservation.kode_unik }}</p>
+                                    <p><strong>Karyawan:</strong> {{ reservation.karyawan.nama_lengkap }} ({{ reservation.karyawan.email }})</p>
+                                    <p><strong>Waktu:</strong> {{ reservation.jadwal.tanggal }} {{ reservation.jam_mulai }}</p>
+                                    <p><strong>Tujuan:</strong> {{ reservation.tujuan_pertemuan }}</p>
+                                    <p><strong>Status:</strong> {{ reservation.status }}</p>
+                                    <p><strong>Feedback:</strong>
+                                        {% if reservation.feedback %}
+                                        {{ reservation.feedback }}
+                                        {% elif reservation.status == 'completed' %}
+                                        <a href="{% url 'reservasi:feedback_form' reservation.id %}" class="btn btn-sm btn-primary">Beri Feedback</a>
+                                        {% else %}
+                                        Belum selesai
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
