@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Buat Reservasi{% endblock %}
+
+{% block content %}
+<section class="py-7">
+    <div class="container-fluid py-2 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Buat Reservasi</h6>
+                        </div>
+                    </div>
+                    <div class="card-body blur shadow-blur">
+                        <div class="my-5">
+                            {% if error %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endif %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="karyawan" class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Karyawan</label>
+                                        <select id="karyawan" name="karyawan" class="form-control" required>
+                                            <option value="">-- Pilih Karyawan --</option>
+                                            {% for karyawan in karyawans %}
+                                                <option value="{{ karyawan.id }}">{{ karyawan.nama_lengkap }} ({{ karyawan.email }})</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="tanggal" class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal</label>
+                                        <input type="date" id="tanggal" name="tanggal" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="duration" class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Durasi (jam)</label>
+                                        <select id="duration" name="duration" class="form-control" required>
+                                            <option value="1">1 jam</option>
+                                            <option value="2">2 jam</option>
+                                            <option value="3">3 jam</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="start_time" class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Waktu Mulai</label>
+                                        <select id="start_time" name="start_time" class="form-control" required>
+                                            {% for hour in hours %}
+                                                <option value="{{ hour }}">{{ hour }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tujuan_pertemuan" class="form-label text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tujuan Pertemuan</label>
+                                    <textarea id="tujuan_pertemuan" name="tujuan_pertemuan" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm bg-gradient-success">Ajukan Reservasi</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Gaya untuk input form */
+    .form-control, .form-select {
+        border: 2px solid #e9ecef !important;
+        background-color: #ffffff !important;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #344767 !important;
+        box-shadow: 0 0 8px rgba(52, 71, 103, 0.3) !important;
+        background-color: #ffffff !important;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+    }
+
+    /* Gaya untuk tombol */
+    .btn-sm {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* Menyesuaikan tampilan kalender */
+    input[type="date"] {
+        position: relative;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        color: transparent;
+        background: transparent;
+    }
+
+    /* Responsif untuk perangkat mobile */
+    @media (max-width: 767.98px) {
+        .form-control, .form-select {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+        }
+        textarea.form-control {
+            min-height: 80px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tambahkan placeholder untuk input tanggal
+        document.getElementById('tanggal').setAttribute('placeholder', 'Pilih tanggal reservasi...');
+        
+        // Inisialisasi Flatpickr untuk input tanggal (opsional)
+        flatpickr("#tanggal", {
+            dateFormat: "Y-m-d",
+            minDate: "today"
+        });
+    });
+</script>
+{% endblock %}

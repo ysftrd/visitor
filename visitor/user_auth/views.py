@@ -127,15 +127,30 @@ def user_login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            logger.debug(f"Mencoba autentikasi untuk email: {email}")
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
+                remember_me = form.cleaned_data.get('remember_me', False)
+                if not remember_me:
+                    # Jika "Remember Me" tidak dicentang, sesi akan kedaluwarsa saat browser ditutup
+                    request.session.set_expiry(0)
+                    logger.debug("Remember Me tidak dicentang, sesi akan kedaluwarsa saat browser ditutup.")
+                else:
+                    # Jika "Remember Me" dicentang, atur sesi untuk bertahan lebih lama (misalnya, 2 minggu)
+                    request.session.set_expiry(1209600)  # 14 hari
+                    logger.debug("Remember Me dicentang, sesi akan bertahan selama 14 hari.")
                 return redirect('home')
             else:
-                form.add_error(None, "Email atau password salah.")
+                messages.error(request, "Email atau password salah.")
+                logger.debug("Autentikasi gagal: Email atau password salah.")
+        else:
+            messages.error(request, "Form tidak valid. Silakan periksa input Anda.")
+            logger.debug(f"Form tidak valid: {form.errors}")
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form, 'hide_component': True})
+
+    return render(request, 'login.html', {'form': form})
 
 
 def register(request):
@@ -169,17 +184,17 @@ def register(request):
                 # Pastikan minimal 4 digit cocok
                 if max_matching_digits < 4:
                     form.add_error('nomor_identitas', 'NIK yang Anda masukkan tidak cukup mirip dengan data pada KTP. Pastikan NIK sesuai dengan KTP.')
-                    return render(request, 'register.html', {'form': form, 'hide_component': True})
+                    return render(request, 'register.html', {'form': form})
             
             # Simpan user jika validasi lolos
             user = form.save()
             # Login user dengan backend default
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, 'Registrasi berhasil! Anda sekarang sudah login.')
-            return redirect('landing')
+            return redirect('home')
         else:
             print("Form errors:", form.errors)  # Debugging
-            return render(request, 'register.html', {'form': form, 'hide_component': True})
+            return render(request, 'register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
-    return render(request, 'register.html', {'form': form, 'hide_component': True})
+    return render(request, 'register.html', {'form': form})

@@ -2,7 +2,6 @@ import cv2
 import pytesseract
 import re
 import numpy as np
-import os
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from PIL import Image
@@ -20,8 +19,14 @@ logger = logging.getLogger(__name__)
 fernet = Fernet(settings.ENCRYPTION_KEY)
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control'}), required=True)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}), required=True)
+    remember_me = forms.BooleanField(
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'rememberMe'}),
+        label="Remember me"
+    )
 
 
 
@@ -181,3 +186,6 @@ class CustomUserCreationForm(UserCreationForm):
                 ktp_content_type=ktp_content_type,
             )
         return user
+
+
+

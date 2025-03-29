@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ActivityLogs
+from .models import ActivityLog
 # Register your models here.
 
-admin.site.register(ActivityLogs)
+admin.site.register(ActivityLog)

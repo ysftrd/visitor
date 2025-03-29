@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullCalendar Test</title>
+    <!-- Load FullCalendar dari CDN -->
+    
+    <style>
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+            min-height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>FullCalendar Test</h1>
+    <div id="calendar"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pastikan FullCalendar tersedia
+            if (typeof FullCalendar === 'undefined') {
+                console.error('FullCalendar tidak tersedia. Pastikan file JS dimuat dengan benar.');
+                return;
+            }
+
+            var calendarEl = document.getElementById('calendar');
+            if (!calendarEl) {
+                console.error("Elemen #calendar tidak ditemukan!");
+                return;
+            }
+
+            // Inisialisasi kalender dengan beberapa event statis
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                events: [
+                    {
+                        title: 'Event 1',
+                        start: '2025-03-27T09:00:00',
+                        end: '2025-03-27T10:00:00',
+                        color: 'green'
+                    },
+                    {
+                        title: 'Event 2',
+                        start: '2025-03-27T11:00:00',
+                        end: '2025-03-27T12:00:00',
+                        color: 'red'
+                    }
+                ],
+                eventClick: function(info) {
+                    alert('Event: ' + info.event.title);
+                }
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+</html>

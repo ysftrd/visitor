@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'visitor.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'e_visitor',
+        'NAME': 'visitor',
         'USER': 'postgres',
         'PASSWORD': 'Yusuf',
         'HOST': 'localhost',
@@ -136,6 +136,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATE_FORMAT = 'Y-m-d'
+TIME_FORMAT = 'H:i'
+DATETIME_FORMAT = 'Y-m-d H:i'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -161,3 +164,45 @@ AUTHENTICATION_BACKENDS = [
     'user_auth.auth_backend.EmailBackend',
     'django.contrib.auth.backends.ModelBackend', 
 ]
+
+
+
+# email bacnend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'magang730@gmail.com'  
+EMAIL_HOST_PASSWORD = 'uugl qzyx wtha vtyc' 
+DEFAULT_FROM_EMAIL = 'magang730@gmail.com'
+
+SESSION_COOKIE_AGE = 1209600  # Default 2 minggu (dalam detik)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Sesi tidak kedaluwarsa saat browser ditutup (kecuali diatur manual)
+SESSION_SAVE_EVERY_REQUEST = True  # Perbarui sesi pada setiap request untuk memperpanjang masa aktif
+
+# Untuk tautan reset password
+SITE_DOMAIN = 'localhost:8000'  # Ganti dengan domain kamu di produksi, misalnya 'example.com'
+SITE_PROTOCOL = 'http'  # Ganti dengan 'https' di produksi
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
