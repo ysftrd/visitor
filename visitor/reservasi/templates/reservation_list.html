@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Reservasi{% endblock %}
+
+{% block content %}
+<div class="container py-2 mt-7">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Daftar Reservasi Anda</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          {% if reservations.exists %}
+            <!-- Tampilan Desktop -->
+            <div class="table-responsive p-0 d-none d-md-block">
+              <table class="table align-items-center mb-0" id="reservationsTable">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 sortable" data-sort="kode_unik">
+                      Kode
+                      <i class="fas fa-sort float-end mt-1"></i>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 sortable" data-sort="nama">
+                      {% if request.user.role == 'tamu' %}Karyawan{% else %}Tamu{% endif %}
+                      <i class="fas fa-sort float-end mt-1"></i>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 sortable" data-sort="tanggal">
+                      Waktu
+                      <i class="fas fa-sort float-end mt-1"></i>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 sortable" data-sort="tujuan">
+                      Tujuan
+                      <i class="fas fa-sort float-end mt-1"></i>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 sortable" data-sort="status">
+                      Status
+                      <i class="fas fa-sort float-end mt-1"></i>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                      Feedback
+                    </th>
+                    {% if request.user.role == 'karyawan' %}
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Aksi</th>
+                    {% endif %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for reservation in reservations %}
+                    <tr>
+                      <td data-sort="kode_unik">
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ reservation.kode_unik }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td data-sort="nama">
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">
+                              {% if request.user.role == 'tamu' %}
+                                {{ reservation.karyawan.nama_lengkap }}
+                              {% else %}
+                                {{ reservation.tamu.nama_lengkap }}
+                              {% endif %}
+                            </h6>
+                            <p class="text-xs text-secondary mb-0">
+                              {% if request.user.role == 'tamu' %}
+                                {{ reservation.karyawan.email }}
+                              {% else %}
+                                {{ reservation.tamu.email }}
+                              {% endif %}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td data-sort="tanggal" data-order="{% with slots=reservation.jadwals.all %}{% if slots.exists %}{{ slots.first.tanggal|date:'Y-m-d' }}{% else %}{{ reservation.tanggal_pertemuan|date:'Y-m-d' }}{% endif %}{% endwith %}">
+                        <p class="text-xs font-weight-bold mb-0">
+                          {% with slots=reservation.jadwals.all %}
+                            {% if slots.exists %}
+                              {{ slots.first.tanggal }} {{ slots.first.jam_mulai|time:"H:i" }} WIB - Selesai
+                            {% else %}
+                              {{ reservation.tanggal_pertemuan|date:"Y-m-d H:i" }} WIB - Selesai
+                            {% endif %}
+                          {% endwith %}
+                        </p>
+                      </td>
+                      <td data-sort="tujuan">
+                        <p class="text-xs font-weight-bold mb-0">{{ reservation.tujuan_pertemuan }}</p>
+                      </td>
+                      <td data-sort="status" data-order="{{ reservation.status }}">
+                        <span class="badge badge-sm 
+                          {% if reservation.status == 'completed' or reservation.status == 'approved' or reservation.status == 'checkin' %}
+                            bg-gradient-success
+                          {% elif reservation.status == 'pending' %}
+                            bg-gradient-warning
+                          {% else %}
+                            bg-gradient-danger
+                          {% endif %}">
+                          {{ reservation.status|title }}
+                        </span>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">
+                          {% if reservation.feedback %}
+                            {{ reservation.feedback }}
+                          {% elif reservation.status == 'completed' and request.user.role == 'tamu' %}
+                            <a href="{% url 'reservasi:feedback_form' reservation.id %}" class="btn btn-sm btn-primary">Beri Feedback</a>
+                          {% else %}
+                            Belum selesai
+                          {% endif %}
+                        </p>
+                      </td>
+                      {% if request.user.role == 'karyawan' %}
+                        <td class="align-middle">
+                          {% if reservation.status == 'pending' %}
+                            <a href="{% url 'reservasi:approve_reservation' reservation.id %}" class="btn btn-link text-success mb-0">
+                              <i class="material-symbols-rounded text-xs">check</i> Setujui
+                            </a>
+                            <a href="{% url 'reservasi:reject_reservation' reservation.id %}" class="btn btn-link text-danger mb-0">
+                              <i class="material-symbols-rounded text-xs">close</i> Tolak
+                            </a>
+                          {% endif %}
+                        </td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Tampilan Mobile (tidak ada sorting) -->
+            <div class="d-block d-md-none px-3">
+              {% for reservation in reservations %}
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <!-- Konten mobile tetap sama -->
+                    <!-- ... -->
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="alert alert-info text-center mx-3" role="alert">
+              Belum ada reservasi yang tersedia.
+              {% if request.user.role == 'tamu' %}
+                <a href="{% url 'reservasi:reservation_create' %}" class="alert-link">Buat reservasi baru</a>.
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sortable {
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .sortable:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+  
+  .sortable i {
+    opacity: 0.3;
+    transition: opacity 0.2s;
+  }
+  
+  .sortable:hover i {
+    opacity: 0.8;
+  }
+  
+  .sortable.active i {
+    opacity: 1;
+  }
+  
+  .sortable.asc i.fa-sort {
+    display: none;
+  }
+  
+  .sortable.desc i.fa-sort {
+    display: none;
+  }
+  
+  .sortable.asc::after {
+    content: "\f0de";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .sortable.desc::after {
+    content: "\f0dd";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const table = document.getElementById('reservationsTable');
+  if (!table) return;
+
+  const headers = table.querySelectorAll('th.sortable');
+  const tbody = table.querySelector('tbody');
+  
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      // Reset semua header
+      headers.forEach(h => {
+        h.classList.remove('asc', 'desc', 'active');
+        h.querySelector('i').className = 'fas fa-sort float-end mt-1';
+      });
+      
+      // Set header aktif
+      header.classList.add('active');
+      const isAsc = header.classList.contains('asc');
+      const sortKey = header.dataset.sort;
+      
+      // Toggle arah sorting
+      if (isAsc) {
+        header.classList.remove('asc');
+        header.classList.add('desc');
+      } else {
+        header.classList.remove('desc');
+        header.classList.add('asc');
+      }
+      
+      // Sort rows
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      
+      rows.sort((a, b) => {
+        const aValue = getSortValue(a, sortKey);
+        const bValue = getSortValue(b, sortKey);
+        
+        if (aValue === bValue) return 0;
+        
+        if (header.classList.contains('asc')) {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
+      });
+      
+      // Rebuild table
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+  
+  function getSortValue(row, sortKey) {
+    const cell = row.querySelector(`td[data-sort="${sortKey}"]`);
+    if (!cell) return '';
+    
+    // Gunakan data-order jika ada (untuk format khusus)
+    if (cell.dataset.order) {
+      return cell.dataset.order;
+    }
+    
+    // Untuk kolom dengan teks biasa
+    return cell.textContent.trim().toLowerCase();
+  }
+});
+</script>
+{% endblock %}

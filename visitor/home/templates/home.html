@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Beranda{% endblock %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<section class="py-7">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-10">
+        <div class="card card-body blur shadow-blur mx-1 animate__animated animate__fadeIn">
+                    <h2 class="text-center mb-4">Selamat Datang di E-Visitor</h2>
+                    <p class="text-center mb-5">Sistem Manajemen Pengunjung Modern PT. Lingga Mekar Engginering</p>
+                    <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                        <a href="{% url 'jadwal:schedule_list' %}" class="btn btn-primary">
+                            <i class="material-symbols-rounded me-2">calendar_today</i>Lihat Jadwal dan Buat Reservasi
+                        </a>
+                        <a href="{% url 'reservasi:reservation_list' %}" class="btn btn-secondary">
+                            <i class="material-symbols-rounded me-2">list</i>Lihat Daftar Reservasi
+                        </a>
+                        {% if request.user.role == 'resepsionis' %}
+                        <a href="{% url 'reservasi:checkin_reservation' %}" class="btn btn-info">
+                            <i class="material-symbols-rounded me-2">check_circle</i>Check-in Reservasi
+                        </a>
+                        {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          {% endif %}
+{% endblock %}

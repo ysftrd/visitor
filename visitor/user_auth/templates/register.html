@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="page-header align-items-start min-vh-100"
+    style="background-image: url('https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80');"
+    loading="lazy">
+    <span class="mask bg-gradient-dark opacity-6"></span>
+    <div class="container my-auto">
+        <div class="row">
+            <div class="col-lg-4 col-md-8 col-12 mx-auto">
+                <div class="card z-index-0 fadeIn3 fadeInBottom shadow-lg border-0" style="border-radius: 15px;">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
+                            <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Daftar sebagai Tamu</h4>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <form role="form" method="post" class="text-start" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <!-- Tampilkan pesan error umum -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {% for error in form.non_field_errors %}
+                                {{ error }}
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {% endif %}
+                            <!-- Email -->
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required>
+                                {% if form.email.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.email.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Password -->
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password1" class="form-control" required>
+                                {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.password1.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Confirm Password -->
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Konfirmasi Password</label>
+                                <input type="password" name="password2" class="form-control" required>
+                                {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.password2.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Nama Lengkap -->
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" name="nama_lengkap" class="form-control" required>
+                                {% if form.nama_lengkap.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.nama_lengkap.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Nomor Telepon -->
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Nomor Telepon</label>
+                                <input type="text" name="nomor_telepon" class="form-control" required>
+                                {% if form.nomor_telepon.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.nomor_telepon.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Foto Selfie -->
+                            <div class="my-3">
+                                <label class="form-label fw-bold">Foto Selfie</label>
+                                <div class="upload-area border border-dashed border-2 rounded p-3 text-center"
+                                    style="background-color: #f8f9fa;">
+                                    <input type="file" name="foto_selfie" id="foto_selfie" class="d-none"
+                                        accept="image/*" required>
+                                    <p class="mb-2 text-muted">Choose file or drop here</p>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="document.getElementById('foto_selfie').click();">Upload</button>
+                                </div>
+                                {% if form.foto_selfie.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.foto_selfie.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Nomor Identitas (NIK) -->
+                            <div class="input-group input-group-outline my-3 position-relative" id="nik_input_group">
+                                <label class="form-label">Nomor Identitas (NIK)</label>
+                                <input type="text" name="nomor_identitas" id="nomor_identitas" class="form-control pe-5"
+                                    required>
+                                <input type="hidden" name="ocr_raw_text" id="ocr_raw_text">
+                                <input type="hidden" name="nik_detected" id="nik_detected">
+                                <!-- Elemen ini seharusnya ada -->
+                                <span class="position-absolute end-0 top-50 translate-middle-y pe-3"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="NIK akan diisi otomatis dari foto KTP jika terdeteksi.">
+                                    <i class="fas fa-info-circle text-muted"></i>
+                                </span>
+                                {% if form.nomor_identitas.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.nomor_identitas.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Foto KTP -->
+                            <div class="my-3">
+                                <label class="form-label fw-bold">Foto KTP</label>
+                                <div class="upload-area border border-dashed border-2 rounded p-3 text-center position-relative"
+                                    style="background-color: #f8f9fa;">
+                                    <input type="file" name="foto_ktp" id="foto_ktp" class="d-none" accept="image/*">
+                                    <p class="mb-2 text-muted" id="foto_ktp_text">Choose file or drop here</p>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="document.getElementById('foto_ktp').click();">Upload</button>
+                                    <div class="spinner-border spinner-border-sm text-primary position-absolute top-50 start-50 translate-middle d-none"
+                                        id="foto_ktp_loading" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                {% if form.foto_ktp.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.foto_ktp.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Tombol Submit -->
+                            <div class="text-center">
+                                <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2"
+                                    style="background-color: #007bff; border: none;"
+                                    onclick="return validateForm()">Daftar</button>
+                            </div>
+                            <p class="mt-4 text-sm text-center">
+                                Sudah punya akun? <a href="{% url 'user_auth:user_login' %}"
+                                    class="text-primary font-weight-bolder" style="text-decoration: none;">Login</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript untuk drag-and-drop, tooltip, dan deteksi NIK -->
+<script>
+
+    // Drag-and-drop functionality
+    document.querySelectorAll('.upload-area').forEach(area => {
+        const input = area.querySelector('input[type="file"]');
+        const text = area.querySelector('p');
+        const loading = area.querySelector('#foto_ktp_loading');
+
+        area.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            area.style.backgroundColor = '#e9ecef';
+        });
+
+        area.addEventListener('dragleave', () => {
+            area.style.backgroundColor = '#f8f9fa';
+        });
+
+        area.addEventListener('drop', (e) => {
+            e.preventDefault();
+            area.style.backgroundColor = '#f8f9fa';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                input.files = files;
+                text.textContent = files[0].name;
+                if (input.id === 'foto_ktp') {
+                    detectNIK(files[0]);
+                }
+            }
+        });
+
+        input.addEventListener('change', () => {
+            if (input.files.length > 0) {
+                text.textContent = input.files[0].name;
+                if (input.id === 'foto_ktp') {
+                    detectNIK(input.files[0]);
+                }
+            }
+        });
+    });
+
+    // Inisialisasi tooltip Bootstrap
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    // Fungsi untuk mendeteksi NIK menggunakan AJAX
+    function detectNIK(file) {
+        const formData = new FormData();
+        formData.append('foto_ktp', file);
+
+        const loading = document.getElementById('foto_ktp_loading');
+        const nikField = document.getElementById('nomor_identitas');
+        const nikInputGroup = document.getElementById('nik_input_group');
+        const text = document.getElementById('foto_ktp_text');
+        const ocrRawTextField = document.getElementById('ocr_raw_text');
+        const nikDetectedField = document.getElementById('nik_detected');
+
+        // Debugging: Pastikan semua elemen ditemukan
+        console.log('nikField:', nikField);
+        console.log('nikInputGroup:', nikInputGroup);
+        console.log('ocrRawTextField:', ocrRawTextField);
+        console.log('nikDetectedField:', nikDetectedField);
+
+        // Tampilkan spinner
+        loading.classList.remove('d-none');
+        text.classList.add('d-none');
+
+        fetch("{% url 'user_auth:detect_nik' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respons dari detect_nik:', data);
+                console.log('Status:', data.status, 'typeof status:', typeof data.status);
+
+                // Sembunyikan spinner
+                loading.classList.add('d-none');
+                text.classList.remove('d-none');
+
+                if (data.status && data.status.trim().toLowerCase() === 'success') {
+                    console.log('Masuk ke blok success');
+                    console.log('NIK terdeteksi:', data.nik);
+                    nikField.value = data.nik;
+                    console.log('Setelah set nikField.value:', nikField.value);
+                    nikInputGroup.classList.add('is-filled');
+                    // Periksa apakah nikDetectedField ada sebelum mengatur nilainya
+                    if (nikDetectedField) {
+                        nikDetectedField.value = 'true';
+                    } else {
+                        console.warn('nikDetectedField tidak ditemukan di DOM');
+                    }
+                } else {
+                    console.log('Masuk ke blok error');
+                    console.log('NIK tidak terdeteksi:', data.message);
+                    nikField.value = '';
+                    nikInputGroup.classList.remove('is-filled');
+                    if (nikDetectedField) {
+                        nikDetectedField.value = 'false';
+                    } else {
+                        console.warn('nikDetectedField tidak ditemukan di DOM');
+                    }
+                    alert(data.message);
+                }
+                // Simpan teks mentah OCR ke input tersembunyi
+                ocrRawTextField.value = data.raw_text || '';
+            })
+            .catch(error => {
+                console.log('Error saat mendeteksi NIK:', error);
+                loading.classList.add('d-none');
+                text.classList.remove('d-none');
+                nikField.value = '';
+                nikInputGroup.classList.remove('is-filled');
+                if (nikDetectedField) {
+                    nikDetectedField.value = 'false';
+                } else {
+                    console.warn('nikDetectedField tidak ditemukan di DOM');
+                }
+                alert('Terjadi kesalahan saat mendeteksi NIK: ' + error.message);
+            });
+    }
+
+    function validateForm() {
+        const fotoKtpInput = document.getElementById('foto_ktp');
+        if (!fotoKtpInput.files || fotoKtpInput.files.length === 0) {
+            alert('Harap unggah foto KTP sebelum mendaftar.');
+            return false; // Mencegah form disubmit
+        }
+        return true; // Izinkan form disubmit
+    }
+</script>
+{% endblock %}
