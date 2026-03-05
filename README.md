@@ -11,6 +11,7 @@ Sebelum menjalankan proyek, pastikan Anda telah menginstal hal-hal berikut:
   [Panduan Instalasi PostgreSQL](https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17)
 
 ## Langkah-Langkah Instalasi
+
 ### 1. Instal PostgreSQL
 
 Ikuti instruksi pada link yang disediakan untuk menginstal PostgreSQL di mesin Anda.
@@ -69,25 +70,77 @@ Pastikan untuk mengganti placeholder dengan kredensial PostgreSQL Anda yang sebe
 
 ### 6. Jalankan Server
 
-Setelah mengkonfigurasi pengaturan database, Anda siap menjalankan server pengembangan. Arahkan ke direktori `visitor` dan jalankan:
+Setelah mengkonfigurasi pengaturan database, pastikan Anda telah melakukan migrasi database. Arahkan terminal ke direktori tempat file `manage.py` berada (dalam folder `visitor`) dan jalankan:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Kemudian, untuk menjalankan server, jalankan:
 
 ```bash
 python manage.py runserver
 ```
 
-Ini akan memulai server pengembangan, dan Anda dapat mengakses aplikasi melalui browser di `http://127.0.0.1:8000/`.
+Ini akan memulai server pengembangan, dan Anda dapat mengakses aplikasi melalui browser secara lokal di `http://127.0.0.1:8000/`.
+
+---
+
+## Cara Penggunaan
+
+1. **Akses Halaman Utama:** Buka `http://127.0.0.1:8000/` di browser web perangkat Anda untuk mengakses Landing Page.
+2. **Melakukan Reservasi:** Pengunjung dapat mengunjungi halaman reservasi untuk mengisi formulir jadwal kunjungan/pertemuan.
+3. **Melihat Jadwal:** Aplikasi menyediakan fitur untuk melihat ketersediaan waktu dan jadwal karyawan.
+4. **Manajemen Jadwal (Sisi Karyawan):** Karyawan dapat mengatur jadwal ketersediaan kerja mereka sendiri melalui antarmuka khusus apabila masuk dengan akun yang sesuai.
+
+---
+
+## Dokumentasi & Preview
+
+Berikut adalah sekilas fungsionalitas dan tampilan antarmuka aplikasi Visitor:
+
+### 1. Landing Page
+
+Halaman selamat datang untuk menyambut para pengunjung aplikasi.
+![Landing Page](visitor_img/landing_page.jpg)
+
+### 2. Beranda
+
+Beranda utama yang tampil sebagai dashboard setelah pengunjung melihat halaman aplikasi.
+![Beranda Aplikasi](visitor_img/beranda.jpg)
+
+### 3. Form Reservasi
+
+Halaman untuk mengisi data reservasi pertemuan untuk pengunjung.
+![Form Reservasi](visitor_img/reservasi.jpg)
+
+### 4. Daftar Reservasi
+
+Tampilan daftar tamu dan reservasi yang telah disubmit melalui aplikasi.
+![Daftar Reservasi](visitor_img/daftar_reservasi.jpg)
+
+### 5. Jadwal Karyawan
+
+Informasi ketersediaan jadwal dari karyawan perusahaan terkait.
+![Jadwal Karyawan](visitor_img/jadwal_karyawan.jpg)
+
+### 6. Atur Jadwal (Sisi Karyawan)
+
+Halaman khusus bagi karyawan untuk mengatur sendiri hari dan jam kerja mereka.
+![Atur Jadwal](visitor_img/atur_jadwal_sisikaryawan.jpg)
+
+---
 
 ## Pemecahan Masalah
 
 Jika Anda menemui masalah selama pengaturan, pastikan:
 
 - PostgreSQL sudah terinstal dan berjalan dengan baik.
-- Konfigurasi `DATABASE` dalam `settings.py` sudah benar.
-- Virtual environment aktif saat menjalankan aplikasi.
+- Konfigurasi `DATABASE` dalam `settings.py` sudah dirubah sesuai dengan database Anda.
+- Virtual environment sudah aktif di command prompt/terminal.
+- Anda telah mengeksekusi perintah migrasi database (`python manage.py migrate`).
 
 ## Lisensi
 
 Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
-```
-
-Dengan penulisan seperti ini, pengguna dapat dengan mudah mengikuti langkah-langkah pengaturan dan menjalankan aplikasi dengan bahasa yang jelas dan mudah dipahami.
